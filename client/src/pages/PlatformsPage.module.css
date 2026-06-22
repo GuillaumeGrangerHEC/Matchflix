@@ -18,6 +18,15 @@
   color: var(--color-ink-soft);
 }
 
+.bigCode {
+  font-family: var(--font-heading);
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--color-terracotta);
+  margin: 0;
+}
+
 .actions {
   margin-top: 20px;
 }

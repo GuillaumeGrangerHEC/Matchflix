@@ -46,6 +46,7 @@ export function PlatformsPage() {
       <Header subtitle={`Code de session : ${code}`} />
       {confirmed ? (
         <div className={styles.waiting}>
+          <p className={styles.bigCode}>{code}</p>
           <Spinner />
           <p>
             En attente des autres participants… ({readyCount}/{groupSize} prêts)
