@@ -1,23 +1,25 @@
 .deck {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .title {
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 8px;
+  flex-shrink: 0;
 }
 
 .stack {
   position: relative;
   flex: 1;
-  min-height: 420px;
+  min-height: 0;
 }
 
 .empty {

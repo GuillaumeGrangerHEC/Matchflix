@@ -11,6 +11,7 @@ import { SwipeDeck } from '@/components/swipe/SwipeDeck'
 import { Spinner } from '@/components/common/Spinner'
 import type { Movie } from '@/types'
 import type { SwipeDirection } from '@/components/swipe/SwipeCard'
+import styles from './SwipePage.module.css'
 
 export function SwipePage() {
   const { code, likeMovie } = useSessionContext()
@@ -94,8 +95,8 @@ export function SwipePage() {
   }
 
   return (
-    <PageContainer>
-      <Header subtitle={subtitle} />
+    <div className={styles.page}>
+      <Header subtitle={subtitle} compact />
       <SwipeDeck
         deck={deck}
         loading={loading}
@@ -105,6 +106,6 @@ export function SwipePage() {
         onSwipe={handleSwipe}
         onAdvance={advance}
       />
-    </PageContainer>
+    </div>
   )
 }

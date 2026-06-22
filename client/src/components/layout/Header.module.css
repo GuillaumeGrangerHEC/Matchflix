@@ -46,3 +46,28 @@
   color: var(--color-ink-soft);
   font-size: 15px;
 }
+
+.headerCompact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.logoCardCompact {
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 6px 16px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 2px;
+}
+
+.logoCompact {
+  height: 44px;
+  width: auto;
+}

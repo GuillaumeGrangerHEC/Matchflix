@@ -1,0 +1,11 @@
+.page {
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
+  padding-top: calc(10px + env(safe-area-inset-top));
+}

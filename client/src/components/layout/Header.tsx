@@ -3,13 +3,13 @@ import { useLanguage } from '@/context/LanguageContext'
 import logo from '@/assets/matchflix-logo.jpg'
 import styles from './Header.module.css'
 
-export function Header({ subtitle }: { subtitle?: ReactNode }) {
+export function Header({ subtitle, compact }: { subtitle?: ReactNode; compact?: boolean }) {
   const { language, setLanguage } = useLanguage()
 
   return (
-    <div className={styles.header}>
-      <div className={styles.logoCard}>
-        <img className={styles.logo} src={logo} alt="Matchflix" />
+    <div className={compact ? styles.headerCompact : styles.header}>
+      <div className={compact ? styles.logoCardCompact : styles.logoCard}>
+        <img className={compact ? styles.logoCompact : styles.logo} src={logo} alt="Matchflix" />
       </div>
       <div className={styles.subtitleRow}>
         {subtitle && <div className={styles.subtitle}>{subtitle}</div>}

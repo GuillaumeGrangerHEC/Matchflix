@@ -100,7 +100,13 @@ export function SwipeCard({ movie, isTop, mediaType, trigger, onSwiped }: SwipeC
       )}
 
       {isTop && (
-        <button type="button" className={styles.trailerButton} onClick={handleTrailerClick}>
+        <button
+          type="button"
+          className={styles.trailerButton}
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          onClick={handleTrailerClick}
+        >
           ▶{' '}
           {trailerState === 'loading'
             ? t('card_trailerLoading')
