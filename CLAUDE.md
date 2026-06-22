@@ -110,6 +110,16 @@ On the server side, `tmdb.service.ts` builds the TMDB query against `/discover/m
 
 TMDB provider IDs in `constants.ts` were re-verified live on 2026-06-22 against `/watch/providers/movie` — HBO Max's id had silently changed from 384 to **1899** since this project started, which caused empty results with no error (TMDB just returns zero matches for an unrecognized/inactive provider id, it doesn't error). Re-verify against the live endpoint if a platform's deck is suspiciously always empty. Movie and TV genres are also separate TMDB taxonomies (`MOVIE_GENRES` vs `TV_GENRES` in `constants.ts`) — don't assume an id means the same thing in both.
 
+### Internationalization (FR/EN)
+
+Custom lightweight i18n, not a library (no react-i18next etc.) — deliberate, since needs are simple (no pluralization rules).
+- `client/src/i18n/translations.ts`: flat `{ fr: {...}, en: {...} }` dictionaries, both with the exact same keys (typed via `TranslationKey = keyof typeof translations.fr`, so a missing English key is a compile error). Supports `{varName}` interpolation.
+- `client/src/context/LanguageContext.tsx`: `useLanguage()` exposes `language`, `setLanguage`, `t(key, vars?)`, and `tError(err)`. Initial language is read from `localStorage`, falling back to `navigator.language` (French if the browser is French, English otherwise — not just defaulting to French).
+- **Errors are translated via a code, not a message.** `sessionService.ts` throws `Error('session_full')` etc. (a stable code), never a human sentence — `tError(err)` maps `code` → `error_<code>` in the current language, falling back to `error_generic` for anything unrecognized. Don't go back to throwing literal French sentences from services; the UI layer is what knows the language.
+- **Movie/show data itself is translated too, not just UI chrome.** The server has no hardcoded `language` anymore — `client/src/hooks/useMovieDeck.ts` passes the current `language` ('fr'/'en') through to `GET /api/movies`, and `server/src/services/tmdb.service.ts` maps it to TMDB's locale codes (`fr` → `fr-FR`, `en` → `en-US`) before querying `/discover/{mediaType}`. This is why TMDB genre names in `constants.ts` carry both `name` (French) and `nameEn`, and `SUPPORTED_COUNTRIES`/`MEDIA_TYPES` carry both `label`/`labelEn` — these are TMDB/product data, not simple UI copy, so they live in `constants.ts` next to the rest of that data rather than in `translations.ts`.
+- Platform/provider brand names (Netflix, Disney+...) are never translated — brand names don't change across languages, so `PLATFORMS` only has one `name`.
+- The language toggle lives in `Header.tsx` (top-right, shows the language you'd switch *to*, not the current one) — visible on every screen, including mid-session, since switching is harmless (just re-renders text and refetches the movie deck in the new language).
+
 ### No authentication
 
 There's no login/auth system. Identity is just a client-generated UUID in `sessionStorage`. The 4-digit code is the only access control, enforced entirely by the Firebase rules in `firebase/database.rules.json` (regex-validated path access + a closed schema via `$other: { ".validate": false }` at each level). This is an accepted trust model (same as sharing a PIN verbally), not an oversight — don't add app-level auth without checking with the user first.

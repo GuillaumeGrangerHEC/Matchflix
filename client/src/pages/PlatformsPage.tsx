@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSessionContext } from '@/context/SessionContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { useSession } from '@/hooks/useSession'
 import { MOVIE_GENRES, TV_GENRES } from '@/utils/constants'
 import { Header } from '@/components/layout/Header'
@@ -13,6 +14,7 @@ import styles from './PlatformsPage.module.css'
 
 export function PlatformsPage() {
   const { code, setPlatforms, setGenres } = useSessionContext()
+  const { t } = useLanguage()
   const session = useSession(code)
   const navigate = useNavigate()
   const [selected, setSelected] = useState<string[]>([])
@@ -43,24 +45,22 @@ export function PlatformsPage() {
 
   return (
     <PageContainer>
-      <Header subtitle={`Code de session : ${code}`} />
+      <Header subtitle={t('platforms_codeLabel', { code })} />
       {confirmed ? (
         <div className={styles.waiting}>
           <p className={styles.bigCode}>{code}</p>
           <Spinner />
-          <p>
-            En attente des autres participants… ({readyCount}/{groupSize} prêts)
-          </p>
+          <p>{t('platforms_waiting', { ready: readyCount, total: groupSize })}</p>
         </div>
       ) : (
         <>
-          <p className={styles.instructions}>Sélectionnez vos plateformes de streaming :</p>
+          <p className={styles.instructions}>{t('platforms_instructions')}</p>
           <PlatformPicker selected={selected} onChange={setSelected} />
-          <p className={styles.instructions}>Genres (optionnel — utile si vous êtes d&apos;accord) :</p>
+          <p className={styles.instructions}>{t('platforms_genresInstructions')}</p>
           <GenrePicker genres={genreOptions} selected={selectedGenres} onChange={setSelectedGenres} />
           <div className={styles.actions}>
             <Button fullWidth disabled={selected.length === 0} onClick={handleConfirm}>
-              Continuer
+              {t('platforms_continue')}
             </Button>
           </div>
         </>

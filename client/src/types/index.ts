@@ -1,5 +1,6 @@
 export type CountryCode = 'CH' | 'FR' | 'BE'
 export type MediaType = 'movie' | 'tv'
+export type Language = 'fr' | 'en'
 
 export interface Platform {
   id: string
@@ -11,6 +12,7 @@ export interface Platform {
 export interface Genre {
   id: number
   name: string
+  nameEn: string
 }
 
 export interface MoviePlatform {

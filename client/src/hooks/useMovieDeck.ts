@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '@/services/api'
-import type { CountryCode, MediaType, Movie } from '@/types'
+import type { CountryCode, Language, MediaType, Movie } from '@/types'
 
 const PREFETCH_THRESHOLD = 3
 const PEEK_SIZE = 2
@@ -9,7 +9,8 @@ export function useMovieDeck(
   providerIds: number[],
   country: CountryCode | null,
   mediaType: MediaType,
-  genreIds: number[]
+  genreIds: number[],
+  language: Language
 ) {
   const [movies, setMovies] = useState<Movie[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -23,7 +24,13 @@ export function useMovieDeck(
   const genresKey = genreIds.slice().sort((a, b) => a - b).join(',')
 
   const fetchPage = useCallback(
-    async (activeCountry: CountryCode, activeProvidersKey: string, activeMediaType: MediaType, activeGenresKey: string) => {
+    async (
+      activeCountry: CountryCode,
+      activeProvidersKey: string,
+      activeMediaType: MediaType,
+      activeGenresKey: string,
+      activeLanguage: Language
+    ) => {
       if (isFetching.current) return
       isFetching.current = true
       setLoading(true)
@@ -35,13 +42,14 @@ export function useMovieDeck(
             country: activeCountry,
             mediaType: activeMediaType,
             genres: activeGenresKey || undefined,
+            language: activeLanguage,
             page: page.current,
           },
         })
         setMovies((prev) => [...prev, ...data.results])
         page.current += 1
       } catch {
-        setError('Impossible de charger les films pour le moment.')
+        setError('fetch_failed')
       } finally {
         setLoading(false)
         isFetching.current = false
@@ -52,21 +60,21 @@ export function useMovieDeck(
 
   useEffect(() => {
     if (!country || !providersKey) return
-    const key = `${country}-${mediaType}-${providersKey}-${genresKey}`
+    const key = `${country}-${mediaType}-${providersKey}-${genresKey}-${language}`
     if (fetchedKey.current === key) return
     fetchedKey.current = key
     setMovies([])
     setCurrentIndex(0)
     page.current = 1
-    fetchPage(country, providersKey, mediaType, genresKey)
-  }, [country, mediaType, providersKey, genresKey, fetchPage])
+    fetchPage(country, providersKey, mediaType, genresKey, language)
+  }, [country, mediaType, providersKey, genresKey, language, fetchPage])
 
   useEffect(() => {
     if (!country || !providersKey) return
     if (movies.length - currentIndex <= PREFETCH_THRESHOLD && !isFetching.current) {
-      fetchPage(country, providersKey, mediaType, genresKey)
+      fetchPage(country, providersKey, mediaType, genresKey, language)
     }
-  }, [currentIndex, movies.length, country, mediaType, providersKey, genresKey, fetchPage])
+  }, [currentIndex, movies.length, country, mediaType, providersKey, genresKey, language, fetchPage])
 
   const advance = useCallback(() => setCurrentIndex((i) => i + 1), [])
 

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useSessionContext } from '@/context/SessionContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { SUPPORTED_COUNTRIES, MEDIA_TYPES, MIN_GROUP_SIZE, MAX_GROUP_SIZE } from '@/utils/constants'
 import type { CountryCode, MediaType } from '@/types'
 import { Button } from '@/components/common/Button'
@@ -8,6 +9,7 @@ import styles from './CreateSessionCard.module.css'
 
 export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => void }) {
   const { createNewSession } = useSessionContext()
+  const { language, t, tError } = useLanguage()
   const [country, setCountry] = useState<CountryCode>('FR')
   const [mediaType, setMediaType] = useState<MediaType>('movie')
   const [groupSize, setGroupSize] = useState(2)
@@ -21,7 +23,7 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
       const code = await createNewSession(country, mediaType, groupSize)
       onCreated(code)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue.')
+      setError(tError(err))
     } finally {
       setLoading(false)
     }
@@ -29,7 +31,7 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
 
   return (
     <div className={styles.card}>
-      <p className={styles.label}>Pays</p>
+      <p className={styles.label}>{t('create_country')}</p>
       <div className={styles.countries}>
         {SUPPORTED_COUNTRIES.map((c) => (
           <button
@@ -38,11 +40,11 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
             className={c.code === country ? styles.countryActive : styles.country}
             onClick={() => setCountry(c.code)}
           >
-            {c.label}
+            {language === 'en' ? c.labelEn : c.label}
           </button>
         ))}
       </div>
-      <p className={styles.label}>Type de contenu</p>
+      <p className={styles.label}>{t('create_mediaType')}</p>
       <div className={styles.countries}>
         {MEDIA_TYPES.map((m) => (
           <button
@@ -51,11 +53,11 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
             className={m.value === mediaType ? styles.countryActive : styles.country}
             onClick={() => setMediaType(m.value)}
           >
-            {m.label}
+            {language === 'en' ? m.labelEn : m.label}
           </button>
         ))}
       </div>
-      <p className={styles.label}>Nombre de participants</p>
+      <p className={styles.label}>{t('create_groupSize')}</p>
       <div className={styles.stepper}>
         <button
           type="button"
@@ -77,12 +79,15 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
       </div>
       {groupSize > 2 && (
         <p className={styles.hint}>
-          Un "Match" apparaîtra dès que la majorité du groupe ({Math.floor(groupSize / 2) + 1} sur {groupSize}) aime
-          le même {mediaType === 'tv' ? 'série' : 'film'}.
+          {t('create_majorityHint', {
+            threshold: Math.floor(groupSize / 2) + 1,
+            groupSize,
+            media: mediaType === 'tv' ? t('create_tvWord') : t('create_movieWord'),
+          })}
         </p>
       )}
       <Button fullWidth onClick={handleCreate} disabled={loading}>
-        {loading ? <Spinner /> : 'Créer une session'}
+        {loading ? <Spinner /> : t('create_button')}
       </Button>
       {error && <p className={styles.error}>{error}</p>}
     </div>

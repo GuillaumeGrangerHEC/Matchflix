@@ -1,7 +1,9 @@
 import tmdbLogo from '@/assets/tmdb-logo.svg'
+import { useLanguage } from '@/context/LanguageContext'
 import styles from './TmdbAttribution.module.css'
 
 export function TmdbAttribution() {
+  const { t } = useLanguage()
   return (
     <a
       className={styles.attribution}
@@ -10,7 +12,7 @@ export function TmdbAttribution() {
       rel="noreferrer"
     >
       <img className={styles.logo} src={tmdbLogo} alt="TMDB" />
-      <span>Ce produit utilise l&apos;API TMDB mais n&apos;est pas approuvé ou certifié par TMDB.</span>
+      <span>{t('attribution_text')}</span>
     </a>
   )
 }

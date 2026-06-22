@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { discoverMoviesByProviders, type MediaType } from '../services/tmdb.service'
+import { discoverMoviesByProviders, type ApiLanguage, type MediaType } from '../services/tmdb.service'
 
 function parseIdList(value: unknown): number[] {
   const raw = String(value ?? '').trim()
@@ -17,6 +17,7 @@ export async function getMovies(req: Request, res: Response, next: NextFunction)
     const genres = parseIdList(req.query.genres)
     const country = String(req.query.country ?? '')
     const mediaType: MediaType = req.query.mediaType === 'tv' ? 'tv' : 'movie'
+    const language: ApiLanguage = req.query.language === 'en' ? 'en' : 'fr'
     const page = Number(req.query.page ?? 1)
 
     if (providers.length === 0 || !country) {
@@ -24,7 +25,14 @@ export async function getMovies(req: Request, res: Response, next: NextFunction)
       return
     }
 
-    const { results, totalPages } = await discoverMoviesByProviders(providers, country, mediaType, genres, page)
+    const { results, totalPages } = await discoverMoviesByProviders(
+      providers,
+      country,
+      mediaType,
+      genres,
+      page,
+      language
+    )
     res.json({ results, totalPages })
   } catch (err) {
     next(err)

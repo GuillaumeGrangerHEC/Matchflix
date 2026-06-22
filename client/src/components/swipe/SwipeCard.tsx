@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
+import { useLanguage } from '@/context/LanguageContext'
 import type { Movie } from '@/types'
 import { TMDB_LOGO_BASE_URL } from '@/utils/constants'
 import styles from './SwipeCard.module.css'
@@ -18,6 +19,7 @@ interface SwipeCardProps {
 }
 
 export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
+  const { t } = useLanguage()
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-200, 200], [-12, 12])
   const likeOpacity = useTransform(x, [20, 120], [0, 1])
@@ -73,21 +75,21 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
         </div>
       )}
 
-      {!showOverview && <div className={styles.synopsisHint}>Synopsis</div>}
+      {!showOverview && <div className={styles.synopsisHint}>{t('card_synopsis')}</div>}
 
       {showOverview && (
         <div className={styles.overviewScrim}>
-          <p className={styles.overview}>{movie.overview || 'Pas de synopsis disponible.'}</p>
+          <p className={styles.overview}>{movie.overview || t('card_noOverview')}</p>
         </div>
       )}
 
       {isTop && (
         <>
           <motion.div className={styles.likeStamp} style={{ opacity: likeOpacity }}>
-            J&apos;AIME
+            {t('card_like')}
           </motion.div>
           <motion.div className={styles.passStamp} style={{ opacity: passOpacity }}>
-            PASSE
+            {t('card_pass')}
           </motion.div>
         </>
       )}

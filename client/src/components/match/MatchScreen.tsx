@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useLanguage } from '@/context/LanguageContext'
 import type { SessionMatch } from '@/types'
 import { Button } from '@/components/common/Button'
 import styles from './MatchScreen.module.css'
@@ -6,6 +7,7 @@ import styles from './MatchScreen.module.css'
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500'
 
 export function MatchScreen({ match, onRestart }: { match: SessionMatch; onRestart: () => void }) {
+  const { t } = useLanguage()
   return (
     <div className={styles.screen}>
       <motion.div
@@ -22,7 +24,7 @@ export function MatchScreen({ match, onRestart }: { match: SessionMatch; onResta
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
       >
-        C&apos;est un Match !
+        {t('match_title')}
       </motion.h1>
       <motion.div
         className={styles.posterWrap}
@@ -36,7 +38,7 @@ export function MatchScreen({ match, onRestart }: { match: SessionMatch; onResta
         <p className={styles.movieTitle}>{match.title}</p>
       </motion.div>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-        <Button onClick={onRestart}>Nouvelle session</Button>
+        <Button onClick={onRestart}>{t('match_restart')}</Button>
       </motion.div>
     </div>
   )

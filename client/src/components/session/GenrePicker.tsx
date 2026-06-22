@@ -1,3 +1,4 @@
+import { useLanguage } from '@/context/LanguageContext'
 import type { Genre } from '@/types'
 import styles from './GenrePicker.module.css'
 
@@ -8,6 +9,8 @@ interface GenrePickerProps {
 }
 
 export function GenrePicker({ genres, selected, onChange }: GenrePickerProps) {
+  const { language } = useLanguage()
+
   function toggle(id: number) {
     if (selected.includes(id)) {
       onChange(selected.filter((s) => s !== id))
@@ -25,7 +28,7 @@ export function GenrePicker({ genres, selected, onChange }: GenrePickerProps) {
           className={selected.includes(genre.id) ? styles.chipActive : styles.chip}
           onClick={() => toggle(genre.id)}
         >
-          {genre.name}
+          {language === 'en' ? genre.nameEn : genre.name}
         </button>
       ))}
     </div>

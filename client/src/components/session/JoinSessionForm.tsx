@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { useSessionContext } from '@/context/SessionContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { Button } from '@/components/common/Button'
 import { Spinner } from '@/components/common/Spinner'
 import styles from './JoinSessionForm.module.css'
 
 export function JoinSessionForm({ onJoined }: { onJoined: () => void }) {
   const { joinExistingSession } = useSessionContext()
+  const { t, tError } = useLanguage()
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -18,7 +20,7 @@ export function JoinSessionForm({ onJoined }: { onJoined: () => void }) {
       await joinExistingSession(code)
       onJoined()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue.')
+      setError(tError(err))
     } finally {
       setLoading(false)
     }
@@ -38,7 +40,7 @@ export function JoinSessionForm({ onJoined }: { onJoined: () => void }) {
         required
       />
       <Button type="submit" fullWidth disabled={loading || code.length !== 4}>
-        {loading ? <Spinner /> : 'Rejoindre la session'}
+        {loading ? <Spinner /> : t('join_button')}
       </Button>
       {error && <p className={styles.error}>{error}</p>}
     </form>

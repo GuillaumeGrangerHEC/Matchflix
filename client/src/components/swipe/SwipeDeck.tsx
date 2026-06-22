@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { SwipeCard, type SwipeDirection } from './SwipeCard'
 import { SwipeActions } from './SwipeActions'
 import { Spinner } from '@/components/common/Spinner'
+import { useLanguage } from '@/context/LanguageContext'
 import type { Movie } from '@/types'
 import styles from './SwipeDeck.module.css'
 
@@ -15,6 +16,7 @@ interface SwipeDeckProps {
 }
 
 export function SwipeDeck({ deck, loading, error, hasMore, onSwipe, onAdvance }: SwipeDeckProps) {
+  const { t } = useLanguage()
   const [trigger, setTrigger] = useState<SwipeDirection | null>(null)
 
   const topMovie = deck[0]
@@ -34,7 +36,7 @@ export function SwipeDeck({ deck, loading, error, hasMore, onSwipe, onAdvance }:
   if (error) {
     return (
       <div className={styles.empty}>
-        <p>{error}</p>
+        <p>{t('error_loadFailed')}</p>
       </div>
     )
   }
@@ -42,11 +44,7 @@ export function SwipeDeck({ deck, loading, error, hasMore, onSwipe, onAdvance }:
   if (!topMovie) {
     return (
       <div className={styles.empty}>
-        {loading || hasMore ? (
-          <Spinner />
-        ) : (
-          <p>Plus rien de disponible sur vos plateformes communes pour l&apos;instant.</p>
-        )}
+        {loading || hasMore ? <Spinner /> : <p>{t('deck_empty')}</p>}
       </div>
     )
   }

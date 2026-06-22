@@ -36,22 +36,22 @@ export async function createSession(
     })
     return code
   }
-  throw new Error('Impossible de générer un code de session disponible, réessaie.')
+  throw new Error('code_generation_failed')
 }
 
 export async function joinSession(code: string, userId: string): Promise<void> {
   if (!isValidSessionCode(code)) {
-    throw new Error('Le code doit contenir 4 chiffres.')
+    throw new Error('invalid_code')
   }
   const snapshot = await get(sessionPath(code))
   if (!snapshot.exists()) {
-    throw new Error('Aucune session ne correspond à ce code.')
+    throw new Error('session_not_found')
   }
   const session = snapshot.val() as Session
   const existingUserIds = Object.keys(session.users ?? {})
   if (existingUserIds.includes(userId)) return
   if (existingUserIds.length >= session.groupSize) {
-    throw new Error('Cette session est déjà complète.')
+    throw new Error('session_full')
   }
   await set(ref(database, `sessions/${code}/users/${userId}`), {
     platforms: [],

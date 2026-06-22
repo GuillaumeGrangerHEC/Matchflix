@@ -2,6 +2,12 @@ import axios from 'axios'
 import { env } from '../config/env'
 
 export type MediaType = 'movie' | 'tv'
+export type ApiLanguage = 'fr' | 'en'
+
+const TMDB_LOCALE: Record<ApiLanguage, string> = {
+  fr: 'fr-FR',
+  en: 'en-US',
+}
 
 interface TmdbDiscoverItem {
   id: number
@@ -50,7 +56,6 @@ const tmdbClient = axios.create({
   baseURL: env.tmdbBaseUrl,
   params: {
     api_key: env.tmdbApiKey,
-    language: 'fr-FR',
     include_adult: false,
   },
 })
@@ -90,11 +95,13 @@ export async function discoverMoviesByProviders(
   watchRegion: string,
   mediaType: MediaType,
   genreIds: number[],
-  page: number
+  page: number,
+  language: ApiLanguage
 ): Promise<{ results: Movie[]; totalPages: number }> {
   const { data } = await tmdbClient.get<TmdbDiscoverResponse>(`/discover/${mediaType}`, {
     params: {
       watch_region: watchRegion,
+      language: TMDB_LOCALE[language],
       // '|' = au moins un de ces fournisseurs/genres (OR) ; ',' signifierait "tous" (AND) côté TMDB.
       with_watch_providers: providerIds.join('|'),
       with_genres: genreIds.length > 0 ? genreIds.join('|') : undefined,

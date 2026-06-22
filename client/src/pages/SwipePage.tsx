@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSessionContext } from '@/context/SessionContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { useSession } from '@/hooks/useSession'
 import { useMovieDeck } from '@/hooks/useMovieDeck'
 import { PLATFORMS } from '@/utils/constants'
@@ -13,6 +14,7 @@ import type { SwipeDirection } from '@/components/swipe/SwipeCard'
 
 export function SwipePage() {
   const { code, likeMovie } = useSessionContext()
+  const { language, t } = useLanguage()
   const session = useSession(code)
   const navigate = useNavigate()
 
@@ -52,7 +54,8 @@ export function SwipePage() {
     commonProviderIds,
     session?.country ?? null,
     session?.mediaType ?? 'movie',
-    effectiveGenreIds ?? []
+    effectiveGenreIds ?? [],
+    language
   )
 
   function handleSwipe(movie: Movie, direction: SwipeDirection) {
@@ -61,7 +64,7 @@ export function SwipePage() {
 
   if (!code) return null
 
-  const subtitle = session?.mediaType === 'tv' ? 'Swipez pour trouver votre série.' : 'Swipez pour trouver votre film.'
+  const subtitle = session?.mediaType === 'tv' ? t('swipe_subtitleTv') : t('swipe_subtitleMovie')
 
   if (!session) {
     return (
@@ -76,7 +79,7 @@ export function SwipePage() {
     return (
       <PageContainer>
         <Header subtitle={subtitle} />
-        <p>Vous n&apos;avez aucune plateforme en commun pour l&apos;instant.</p>
+        <p>{t('swipe_noCommonPlatforms')}</p>
       </PageContainer>
     )
   }
@@ -85,7 +88,7 @@ export function SwipePage() {
     return (
       <PageContainer>
         <Header subtitle={subtitle} />
-        <p>Vous n&apos;avez choisi aucun genre en commun — essayez d&apos;en sélectionner un que vous partagez tous les deux.</p>
+        <p>{t('swipe_genreConflict')}</p>
       </PageContainer>
     )
   }
