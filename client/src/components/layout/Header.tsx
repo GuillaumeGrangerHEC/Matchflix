@@ -16,7 +16,9 @@ export function Header({ subtitle }: { subtitle?: ReactNode }) {
       >
         {language === 'fr' ? 'EN' : 'FR'}
       </button>
-      <img className={styles.logo} src={logo} alt="Matchflix" />
+      <div className={styles.logoCard}>
+        <img className={styles.logo} src={logo} alt="Matchflix" />
+      </div>
       {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
     </div>
   )
