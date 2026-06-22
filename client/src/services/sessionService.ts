@@ -12,6 +12,7 @@ function sessionPath(code: string) {
 export async function createSession(
   country: CountryCode,
   mediaType: MediaType,
+  groupSize: number,
   userId: string
 ): Promise<string> {
   for (let attempt = 0; attempt < MAX_CODE_ATTEMPTS; attempt++) {
@@ -22,6 +23,7 @@ export async function createSession(
     await set(sessionPath(code), {
       country,
       mediaType,
+      groupSize,
       createdAt: Date.now(),
       users: {
         [userId]: {
@@ -48,7 +50,7 @@ export async function joinSession(code: string, userId: string): Promise<void> {
   const session = snapshot.val() as Session
   const existingUserIds = Object.keys(session.users ?? {})
   if (existingUserIds.includes(userId)) return
-  if (existingUserIds.length >= 2) {
+  if (existingUserIds.length >= session.groupSize) {
     throw new Error('Cette session est déjà complète.')
   }
   await set(ref(database, `sessions/${code}/users/${userId}`), {

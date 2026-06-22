@@ -11,6 +11,9 @@
         "mediaType": {
           ".validate": "newData.isString() && (newData.val() === 'movie' || newData.val() === 'tv')"
         },
+        "groupSize": {
+          ".validate": "newData.isNumber() && newData.val() >= 2 && newData.val() <= 8"
+        },
         "createdAt": {
           ".validate": "newData.isNumber()"
         },

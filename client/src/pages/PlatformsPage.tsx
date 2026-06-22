@@ -24,11 +24,13 @@ export function PlatformsPage() {
   }, [code, navigate])
 
   const users = session ? Object.entries(session.users ?? {}) : []
-  const bothReady = users.length === 2 && users.every(([, u]) => (u.platforms?.length ?? 0) > 0)
+  const groupSize = session?.groupSize ?? 2
+  const readyCount = users.filter(([, u]) => (u.platforms?.length ?? 0) > 0).length
+  const groupReady = users.length === groupSize && readyCount === groupSize
 
   useEffect(() => {
-    if (bothReady) navigate('/swipe', { replace: true })
-  }, [bothReady, navigate])
+    if (groupReady) navigate('/swipe', { replace: true })
+  }, [groupReady, navigate])
 
   async function handleConfirm() {
     await Promise.all([setPlatforms(selected), setGenres(selectedGenres)])
@@ -45,7 +47,9 @@ export function PlatformsPage() {
       {confirmed ? (
         <div className={styles.waiting}>
           <Spinner />
-          <p>En attente de l&apos;autre joueur…</p>
+          <p>
+            En attente des autres participants… ({readyCount}/{groupSize} prêts)
+          </p>
         </div>
       ) : (
         <>

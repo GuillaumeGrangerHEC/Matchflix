@@ -26,24 +26,24 @@ export function SwipePage() {
 
   const commonProviderIds = useMemo(() => {
     const users = session ? Object.values(session.users ?? {}) : []
-    if (users.length < 2) return []
-    const [platformsA, platformsB] = users.map((u) => u.platforms ?? [])
-    const common = platformsA.filter((id) => platformsB.includes(id))
+    const groupSize = session?.groupSize ?? 2
+    if (users.length < groupSize) return []
+    const platformLists = users.map((u) => u.platforms ?? [])
+    const common = platformLists.reduce((acc, list) => acc.filter((id) => list.includes(id)))
     return common
       .map((id) => PLATFORMS.find((p) => p.id === id)?.tmdbProviderId)
       .filter((id): id is number => typeof id === 'number')
   }, [session])
 
-  // null = personne n'a de préférence de genre (pas de filtre). [] = les deux ont choisi des
-  // genres mais sans aucun en commun (désaccord réel, donc rien à proposer).
+  // null = personne n'a de préférence de genre (pas de filtre). [] = au moins deux participants ont
+  // choisi des genres mais sans aucun en commun (désaccord réel, donc rien à proposer).
   const effectiveGenreIds = useMemo<number[] | null>(() => {
     const users = session ? Object.values(session.users ?? {}) : []
-    if (users.length < 2) return null
-    const [genresA, genresB] = users.map((u) => u.genres ?? [])
-    if (genresA.length === 0 && genresB.length === 0) return null
-    if (genresA.length === 0) return genresB
-    if (genresB.length === 0) return genresA
-    return genresA.filter((g) => genresB.includes(g))
+    const groupSize = session?.groupSize ?? 2
+    if (users.length < groupSize) return null
+    const genreLists = users.map((u) => u.genres ?? []).filter((list) => list.length > 0)
+    if (genreLists.length === 0) return null
+    return genreLists.reduce((acc, list) => acc.filter((g) => list.includes(g)))
   }, [session])
 
   const hasGenreConflict = effectiveGenreIds !== null && effectiveGenreIds.length === 0

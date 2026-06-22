@@ -63,4 +63,7 @@ export const TV_GENRES: Genre[] = [
   { id: 37, name: 'Western' },
 ]
 
+export const MIN_GROUP_SIZE = 2
+export const MAX_GROUP_SIZE = 8
+
 export const SESSION_STORAGE_KEY = 'matchflix.session'

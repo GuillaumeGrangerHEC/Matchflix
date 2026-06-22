@@ -71,7 +71,8 @@ This is the one thing to internalize before changing either side:
 ```
 sessions/{4-digit code}/
   country: "CH" | "FR" | "BE"
-  mediaType: "movie" | "tv"        # chosen once at session creation, shared by both users
+  mediaType: "movie" | "tv"        # chosen once at session creation, shared by all participants
+  groupSize: number                # 2-8, chosen once at session creation (MIN/MAX_GROUP_SIZE in constants.ts)
   createdAt: number
   users/{userId}/                  # userId = crypto.randomUUID(), persisted in sessionStorage
     platforms: string[]            # ids from PLATFORMS, e.g. "netflix"
@@ -80,9 +81,14 @@ sessions/{4-digit code}/
       title: string
       posterPath: string | null
     joinedAt: number
-  match?/                          # present once both users liked the same movie
+  match?/                          # present once a majority of the group liked the same movie
     movieId, title, posterPath, matchedAt
 ```
+
+**Sessions support 2-8 participants, not just couples** (`groupSize`, set at creation via a stepper on `CreateSessionCard`). This was a generalization from an original 2-person-only design — three places had to move from "exactly 2 users" to "N users, compared against `session.groupSize`":
+- `SwipePage.tsx`'s platform/genre intersection: was destructuring `[a, b] = users`, now `users.map(...).reduce((acc, list) => acc.filter(...))` to intersect across however many joined.
+- `PlatformsPage.tsx`'s ready-check: was `users.length === 2`, now `users.length === session.groupSize`, with a "X/Y prêts" progress readout instead of a binary spinner.
+- `useSession.ts`'s match detection: was comparing exactly `userEntries[0]` vs `userEntries[1]`'s likes, now tallies likes per movie across *all* participants and fires on a **majority** threshold (`Math.floor(groupSize / 2) + 1` — for `groupSize=2` this is still 2, i.e. both, so the original couple behavior is the groupSize=2 special case of this same formula, not a separate code path).
 
 **⚠️ `firebase/database.rules.json` is not auto-deployed.** Whenever this file changes, the live rules in the Firebase console (Realtime Database > Rules tab) must be manually re-pasted and published, or every write that touches the new/changed field gets rejected with `PERMISSION_DENIED` (happened once already when `mediaType`/`genres` were added to the schema but the console rules weren't updated to match). Always call this out explicitly to the user after editing this file.
 

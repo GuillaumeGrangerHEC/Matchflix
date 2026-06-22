@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
 import type { Movie } from '@/types'
 import styles from './SwipeCard.module.css'
@@ -21,6 +21,7 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
   const rotate = useTransform(x, [-200, 200], [-12, 12])
   const likeOpacity = useTransform(x, [20, 120], [0, 1])
   const passOpacity = useTransform(x, [-120, -20], [1, 0])
+  const [showOverview, setShowOverview] = useState(false)
 
   function flyOut(direction: SwipeDirection) {
     animate(x, direction === 'like' ? FLY_OUT_DISTANCE : -FLY_OUT_DISTANCE, {
@@ -41,20 +42,18 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
     if (Math.abs(info.offset.x) > SWIPE_THRESHOLD) {
       flyOut(info.offset.x > 0 ? 'like' : 'pass')
     } else {
-      animate(x, 0, { type: 'spring', stiffness: 400, damping: 30 })
+      animate(x, 0, { type: 'spring', stiffness: 500, damping: 35 })
     }
   }
 
   return (
     <motion.div
       className={styles.card}
-      style={{ x, rotate }}
+      style={{ x, rotate, y: isTop ? 0 : 14 }}
       drag={isTop ? 'x' : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={1}
+      dragMomentum={false}
       onDragEnd={handleDragEnd}
-      animate={isTop ? { scale: 1, y: 0 } : { scale: 0.96, y: 14 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      onTap={() => isTop && setShowOverview((v) => !v)}
     >
       {movie.posterPath ? (
         <img
@@ -69,8 +68,13 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
       <div className={styles.gradient} />
       <div className={styles.info}>
         <h2 className={styles.title}>{movie.title}</h2>
-        <p className={styles.overview}>{movie.overview}</p>
+        <p className={styles.hint}>{showOverview ? '' : 'Touchez pour le synopsis'}</p>
       </div>
+      {showOverview && (
+        <div className={styles.overviewScrim}>
+          <p className={styles.overview}>{movie.overview || 'Pas de synopsis disponible.'}</p>
+        </div>
+      )}
       {isTop && (
         <>
           <motion.div className={styles.likeStamp} style={{ opacity: likeOpacity }}>

@@ -17,7 +17,7 @@ interface StoredIdentity {
 interface SessionContextValue {
   code: string | null
   userId: string
-  createNewSession: (country: CountryCode, mediaType: MediaType) => Promise<string>
+  createNewSession: (country: CountryCode, mediaType: MediaType, groupSize: number) => Promise<string>
   joinExistingSession: (joinCode: string) => Promise<void>
   setPlatforms: (platforms: string[]) => Promise<void>
   setGenres: (genres: number[]) => Promise<void>
@@ -51,9 +51,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const createNewSession = useCallback(
-    async (country: CountryCode, mediaType: MediaType) => {
+    async (country: CountryCode, mediaType: MediaType, groupSize: number) => {
       const id = userId || createUserId()
-      const newCode = await createSession(country, mediaType, id)
+      const newCode = await createSession(country, mediaType, groupSize, id)
       setUserId(id)
       setCode(newCode)
       persist(newCode, id)

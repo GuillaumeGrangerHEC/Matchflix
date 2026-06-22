@@ -18,21 +18,33 @@ export function useSession(code: string | null) {
     if (!code || !session || session.match || matchWriteInFlight.current) return
 
     const userEntries = Object.entries(session.users ?? {})
-    if (userEntries.length < 2) return
+    const groupSize = session.groupSize ?? 2
+    if (userEntries.length < groupSize) return
 
-    const [, userA] = userEntries[0]
-    const [, userB] = userEntries[1]
-    const sharedMovieId = Object.keys(userA.likedMovieIds ?? {}).find(
-      (movieId) => movieId in (userB.likedMovieIds ?? {})
-    )
-    if (!sharedMovieId) return
+    // Tally likes across the whole group rather than just two users, so this scales to families/groups.
+    const likeCounts = new Map<string, { count: number; title: string; posterPath: string | null }>()
+    for (const [, user] of userEntries) {
+      for (const [movieId, liked] of Object.entries(user.likedMovieIds ?? {})) {
+        const existing = likeCounts.get(movieId)
+        if (existing) {
+          existing.count += 1
+        } else {
+          likeCounts.set(movieId, { count: 1, title: liked.title, posterPath: liked.posterPath })
+        }
+      }
+    }
 
-    const likedMovie = userA.likedMovieIds[sharedMovieId]
+    // Majority = strictly more than half. For groupSize=2 this requires both (2), same as before.
+    const majorityThreshold = Math.floor(groupSize / 2) + 1
+    const matchEntry = [...likeCounts.entries()].find(([, info]) => info.count >= majorityThreshold)
+    if (!matchEntry) return
+
+    const [movieId, info] = matchEntry
     matchWriteInFlight.current = true
     writeMatch(code, {
-      movieId: Number(sharedMovieId),
-      title: likedMovie.title,
-      posterPath: likedMovie.posterPath,
+      movieId: Number(movieId),
+      title: info.title,
+      posterPath: info.posterPath,
       matchedAt: Date.now(),
     }).finally(() => {
       matchWriteInFlight.current = false

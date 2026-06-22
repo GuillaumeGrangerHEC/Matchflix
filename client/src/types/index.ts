@@ -44,6 +44,7 @@ export interface SessionMatch {
 export interface Session {
   country: CountryCode
   mediaType: MediaType
+  groupSize: number
   createdAt: number
   users: Record<string, SessionUser>
   match?: SessionMatch

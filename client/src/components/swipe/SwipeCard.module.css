@@ -46,17 +46,29 @@
 
 .title {
   font-size: 22px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.hint {
+  font-size: 13px;
+  opacity: 0.75;
+  min-height: 1em;
+}
+
+.overviewScrim {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 24px;
+  background: rgba(46, 36, 34, 0.82);
+  overflow-y: auto;
 }
 
 .overview {
-  font-size: 14px;
-  line-height: 1.4;
-  opacity: 0.9;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-white);
 }
 
 .likeStamp,

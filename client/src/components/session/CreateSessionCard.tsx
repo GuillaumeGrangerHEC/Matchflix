@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSessionContext } from '@/context/SessionContext'
-import { SUPPORTED_COUNTRIES, MEDIA_TYPES } from '@/utils/constants'
+import { SUPPORTED_COUNTRIES, MEDIA_TYPES, MIN_GROUP_SIZE, MAX_GROUP_SIZE } from '@/utils/constants'
 import type { CountryCode, MediaType } from '@/types'
 import { Button } from '@/components/common/Button'
 import { Spinner } from '@/components/common/Spinner'
@@ -10,6 +10,7 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
   const { createNewSession } = useSessionContext()
   const [country, setCountry] = useState<CountryCode>('FR')
   const [mediaType, setMediaType] = useState<MediaType>('movie')
+  const [groupSize, setGroupSize] = useState(2)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,7 +18,7 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
     setLoading(true)
     setError(null)
     try {
-      const code = await createNewSession(country, mediaType)
+      const code = await createNewSession(country, mediaType, groupSize)
       onCreated(code)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue.')
@@ -54,6 +55,32 @@ export function CreateSessionCard({ onCreated }: { onCreated: (code: string) => 
           </button>
         ))}
       </div>
+      <p className={styles.label}>Nombre de participants</p>
+      <div className={styles.stepper}>
+        <button
+          type="button"
+          className={styles.stepperButton}
+          disabled={groupSize <= MIN_GROUP_SIZE}
+          onClick={() => setGroupSize((n) => Math.max(MIN_GROUP_SIZE, n - 1))}
+        >
+          −
+        </button>
+        <span className={styles.stepperValue}>{groupSize}</span>
+        <button
+          type="button"
+          className={styles.stepperButton}
+          disabled={groupSize >= MAX_GROUP_SIZE}
+          onClick={() => setGroupSize((n) => Math.min(MAX_GROUP_SIZE, n + 1))}
+        >
+          +
+        </button>
+      </div>
+      {groupSize > 2 && (
+        <p className={styles.hint}>
+          Un "Match" apparaîtra dès que la majorité du groupe ({Math.floor(groupSize / 2) + 1} sur {groupSize}) aime
+          le même {mediaType === 'tv' ? 'série' : 'film'}.
+        </p>
+      )}
       <Button fullWidth onClick={handleCreate} disabled={loading}>
         {loading ? <Spinner /> : 'Créer une session'}
       </Button>
