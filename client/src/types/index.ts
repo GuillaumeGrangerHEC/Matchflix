@@ -13,6 +13,11 @@ export interface Genre {
   name: string
 }
 
+export interface MoviePlatform {
+  name: string
+  logoPath: string
+}
+
 export interface Movie {
   id: number
   title: string
@@ -20,6 +25,7 @@ export interface Movie {
   posterPath: string | null
   releaseDate: string
   voteAverage: number
+  platform: MoviePlatform | null
 }
 
 export interface LikedMovie {

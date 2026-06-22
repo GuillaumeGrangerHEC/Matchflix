@@ -53,6 +53,7 @@ export function SwipeDeck({ deck, loading, error, hasMore, onSwipe, onAdvance }:
 
   return (
     <div className={styles.deck}>
+      <h2 className={styles.title}>{topMovie.title}</h2>
       <div className={styles.stack}>
         {nextMovie && (
           <SwipeCard key={nextMovie.id} movie={nextMovie} isTop={false} onSwiped={handleSwiped} />

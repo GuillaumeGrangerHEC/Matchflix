@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
 import type { Movie } from '@/types'
+import { TMDB_LOGO_BASE_URL } from '@/utils/constants'
 import styles from './SwipeCard.module.css'
 
 const SWIPE_THRESHOLD = 120
@@ -65,16 +66,21 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
       ) : (
         <div className={styles.posterFallback}>{movie.title}</div>
       )}
-      <div className={styles.gradient} />
-      <div className={styles.info}>
-        <h2 className={styles.title}>{movie.title}</h2>
-        <p className={styles.hint}>{showOverview ? '' : 'Touchez pour le synopsis'}</p>
-      </div>
+
+      {movie.platform && (
+        <div className={styles.platformBadge}>
+          <img src={`${TMDB_LOGO_BASE_URL}${movie.platform.logoPath}`} alt={movie.platform.name} />
+        </div>
+      )}
+
+      {!showOverview && <div className={styles.synopsisHint}>Synopsis</div>}
+
       {showOverview && (
         <div className={styles.overviewScrim}>
           <p className={styles.overview}>{movie.overview || 'Pas de synopsis disponible.'}</p>
         </div>
       )}
+
       {isTop && (
         <>
           <motion.div className={styles.likeStamp} style={{ opacity: likeOpacity }}>

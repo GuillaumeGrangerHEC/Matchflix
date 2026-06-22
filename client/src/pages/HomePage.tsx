@@ -15,7 +15,7 @@ export function HomePage() {
 
   return (
     <PageContainer>
-      <Header subtitle="Trouvez le film parfait à deux." />
+      <Header subtitle="Trouvez le film parfait à regarder ensemble." />
       <div className={styles.tabs}>
         <button
           type="button"

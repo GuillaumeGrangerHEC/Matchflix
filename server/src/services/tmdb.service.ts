@@ -20,6 +20,22 @@ interface TmdbDiscoverResponse {
   total_pages: number
 }
 
+interface TmdbWatchProvider {
+  provider_id: number
+  provider_name: string
+  logo_path: string
+}
+
+interface TmdbWatchProvidersResponse {
+  id: number
+  results: Record<string, { flatrate?: TmdbWatchProvider[] }>
+}
+
+export interface MoviePlatform {
+  name: string
+  logoPath: string
+}
+
 export interface Movie {
   id: number
   title: string
@@ -27,6 +43,7 @@ export interface Movie {
   posterPath: string | null
   releaseDate: string
   voteAverage: number
+  platform: MoviePlatform | null
 }
 
 const tmdbClient = axios.create({
@@ -39,7 +56,7 @@ const tmdbClient = axios.create({
 })
 
 // TMDB renvoie `title`/`release_date` pour les films et `name`/`first_air_date` pour les séries.
-function toMovie(raw: TmdbDiscoverItem): Movie {
+function toMovie(raw: TmdbDiscoverItem): Omit<Movie, 'platform'> {
   return {
     id: raw.id,
     title: raw.title ?? raw.name ?? '',
@@ -47,6 +64,24 @@ function toMovie(raw: TmdbDiscoverItem): Movie {
     posterPath: raw.poster_path,
     releaseDate: raw.release_date ?? raw.first_air_date ?? '',
     voteAverage: raw.vote_average,
+  }
+}
+
+// Le discover ne dit que "disponible sur au moins un de ces fournisseurs" — cet appel
+// supplémentaire (un par film) détermine LEQUEL précisément, pour l'afficher sur la carte.
+async function getMoviePlatform(
+  id: number,
+  mediaType: MediaType,
+  watchRegion: string,
+  allowedProviderIds: number[]
+): Promise<MoviePlatform | null> {
+  try {
+    const { data } = await tmdbClient.get<TmdbWatchProvidersResponse>(`/${mediaType}/${id}/watch/providers`)
+    const flatrate = data.results[watchRegion]?.flatrate ?? []
+    const match = flatrate.find((p) => allowedProviderIds.includes(p.provider_id))
+    return match ? { name: match.provider_name, logoPath: match.logo_path } : null
+  } catch {
+    return null
   }
 }
 
@@ -69,5 +104,11 @@ export async function discoverMoviesByProviders(
       page,
     },
   })
-  return { results: data.results.map(toMovie), totalPages: data.total_pages }
+  const results = await Promise.all(
+    data.results.map(async (raw) => ({
+      ...toMovie(raw),
+      platform: await getMoviePlatform(raw.id, mediaType, watchRegion, providerIds),
+    }))
+  )
+  return { results, totalPages: data.total_pages }
 }
