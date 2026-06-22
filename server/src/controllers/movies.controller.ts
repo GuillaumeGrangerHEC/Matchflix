@@ -2,7 +2,10 @@ import type { Request, Response, NextFunction } from 'express'
 import { discoverMoviesByProviders, type MediaType } from '../services/tmdb.service'
 
 function parseIdList(value: unknown): number[] {
-  return String(value ?? '')
+  const raw = String(value ?? '').trim()
+  if (!raw) return []
+  // Number('') === 0, not NaN — the early return above avoids that trap turning "no param" into [0].
+  return raw
     .split(',')
     .map(Number)
     .filter((id) => !Number.isNaN(id))
