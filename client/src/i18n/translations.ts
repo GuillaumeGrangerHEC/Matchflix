@@ -39,6 +39,9 @@ export const translations = {
     card_like: "J'AIME",
     card_pass: 'PASSE',
     card_noOverview: 'Pas de synopsis disponible.',
+    card_trailer: 'Bande-annonce',
+    card_noTrailer: 'Pas de bande-annonce disponible.',
+    card_trailerLoading: 'Chargement…',
 
     match_title: "C'est un Match !",
     match_restart: 'Nouvelle session',
@@ -46,7 +49,7 @@ export const translations = {
     notFound_text: 'Page introuvable.',
     notFound_back: "Retour à l'accueil",
 
-    attribution_text: "Ce produit utilise l'API TMDB mais n'est pas approuvé ou certifié par TMDB.",
+    attribution_text: "Utilise l'API TMDB — non approuvé ou certifié par TMDB.",
   },
   en: {
     home_subtitle: 'Find the perfect movie to watch together.',
@@ -87,6 +90,9 @@ export const translations = {
     card_like: 'LIKE',
     card_pass: 'NOPE',
     card_noOverview: 'No synopsis available.',
+    card_trailer: 'Trailer',
+    card_noTrailer: 'No trailer available.',
+    card_trailerLoading: 'Loading…',
 
     match_title: "It's a Match!",
     match_restart: 'New session',
@@ -94,7 +100,7 @@ export const translations = {
     notFound_text: 'Page not found.',
     notFound_back: 'Back to home',
 
-    attribution_text: 'This product uses the TMDB API but is not endorsed or certified by TMDB.',
+    attribution_text: 'Uses the TMDB API — not endorsed or certified by TMDB.',
   },
 } as const
 

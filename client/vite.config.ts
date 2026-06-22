@@ -1,14 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
-import { qrcode } from 'vite-plugin-qrcode'
 import path from 'path'
 
 export default defineConfig({
   plugins: [
     react(),
-    // N'affiche le QR code que pour `npm run dev` (qrcode() sans argument se désactive au build).
-    qrcode(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],

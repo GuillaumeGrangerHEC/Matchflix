@@ -90,6 +90,41 @@ async function getMoviePlatform(
   }
 }
 
+interface TmdbVideo {
+  key: string
+  site: string
+  type: string
+  official: boolean
+}
+
+interface TmdbVideosResponse {
+  results: TmdbVideo[]
+}
+
+function pickBestTrailer(videos: TmdbVideo[]): string | null {
+  const youtube = videos.filter((v) => v.site === 'YouTube')
+  return (
+    youtube.find((v) => v.type === 'Trailer' && v.official)?.key ??
+    youtube.find((v) => v.type === 'Trailer')?.key ??
+    youtube.find((v) => v.type === 'Teaser')?.key ??
+    youtube[0]?.key ??
+    null
+  )
+}
+
+// Beaucoup de bandes-annonces ne sont taguées que dans une seule langue (souvent l'anglais) côté
+// TMDB — si la langue demandée ne renvoie rien, on retente sans filtre de langue avant d'abandonner.
+export async function getTrailerKey(id: number, mediaType: MediaType, language: ApiLanguage): Promise<string | null> {
+  const { data } = await tmdbClient.get<TmdbVideosResponse>(`/${mediaType}/${id}/videos`, {
+    params: { language: TMDB_LOCALE[language] },
+  })
+  const key = pickBestTrailer(data.results)
+  if (key) return key
+
+  const { data: fallback } = await tmdbClient.get<TmdbVideosResponse>(`/${mediaType}/${id}/videos`)
+  return pickBestTrailer(fallback.results)
+}
+
 export async function discoverMoviesByProviders(
   providerIds: number[],
   watchRegion: string,

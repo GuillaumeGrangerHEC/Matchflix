@@ -3,7 +3,7 @@ import { SwipeCard, type SwipeDirection } from './SwipeCard'
 import { SwipeActions } from './SwipeActions'
 import { Spinner } from '@/components/common/Spinner'
 import { useLanguage } from '@/context/LanguageContext'
-import type { Movie } from '@/types'
+import type { MediaType, Movie } from '@/types'
 import styles from './SwipeDeck.module.css'
 
 interface SwipeDeckProps {
@@ -11,11 +11,12 @@ interface SwipeDeckProps {
   loading: boolean
   error: string | null
   hasMore: boolean
+  mediaType: MediaType
   onSwipe: (movie: Movie, direction: SwipeDirection) => void
   onAdvance: () => void
 }
 
-export function SwipeDeck({ deck, loading, error, hasMore, onSwipe, onAdvance }: SwipeDeckProps) {
+export function SwipeDeck({ deck, loading, error, hasMore, mediaType, onSwipe, onAdvance }: SwipeDeckProps) {
   const { t } = useLanguage()
   const [trigger, setTrigger] = useState<SwipeDirection | null>(null)
 
@@ -54,9 +55,22 @@ export function SwipeDeck({ deck, loading, error, hasMore, onSwipe, onAdvance }:
       <h2 className={styles.title}>{topMovie.title}</h2>
       <div className={styles.stack}>
         {nextMovie && (
-          <SwipeCard key={nextMovie.id} movie={nextMovie} isTop={false} onSwiped={handleSwiped} />
+          <SwipeCard
+            key={nextMovie.id}
+            movie={nextMovie}
+            isTop={false}
+            mediaType={mediaType}
+            onSwiped={handleSwiped}
+          />
         )}
-        <SwipeCard key={topMovie.id} movie={topMovie} isTop trigger={trigger} onSwiped={handleSwiped} />
+        <SwipeCard
+          key={topMovie.id}
+          movie={topMovie}
+          isTop
+          mediaType={mediaType}
+          trigger={trigger}
+          onSwiped={handleSwiped}
+        />
       </div>
       <SwipeActions
         disabled={!!trigger}

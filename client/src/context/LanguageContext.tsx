@@ -15,7 +15,8 @@ const LanguageContext = createContext<LanguageContextValue | null>(null)
 function detectInitialLanguage(): Language {
   const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY)
   if (stored === 'fr' || stored === 'en') return stored
-  return navigator.language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
+  // English by default for everyone; users can switch to French via the Header toggle.
+  return 'en'
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

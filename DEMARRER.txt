@@ -3,9 +3,9 @@ MATCHFLIX - Comment demarrer l'application
 
 OPTION RAPIDE (recommandee)
 ----------------------------
-Double-clique sur "start.bat" a la racine du projet (s:\App\start.bat).
+Double-clique sur "start.bat" a la racine du projet (C:\Guillaume\start.bat).
 Deux fenetres noires s'ouvrent (serveur + client), et le navigateur
-s'ouvre automatiquement sur http://10.28.19.21:5173 apres quelques secondes.
+s'ouvre automatiquement sur http://localhost:5173 apres quelques secondes.
 
 Si la page ne charge pas du premier coup, attends quelques secondes
 et actualise (F5) - le serveur n'a peut-etre pas fini de demarrer.
@@ -14,63 +14,51 @@ Laisse les deux fenetres noires ouvertes pendant que tu utilises l'app.
 Pour tout arreter : ferme les deux fenetres (ou Ctrl+C dans chacune).
 
 
-TESTER SUR TON TELEPHONE (vrai test, recommande)
---------------------------------------------------
-1. Assure-toi que ton telephone est connecte au MEME Wi-Fi que ce PC.
-2. Lance l'app (start.bat, ou les 2 commandes manuelles ci-dessous).
-3. Dans la fenetre "Matchflix - Client", un QR code apparait dans le
-   terminal apres quelques secondes (sous "Visit page on mobile").
-4. Scanne-le avec l'appareil photo de ton telephone -> l'app s'ouvre
-   directement dans ton navigateur mobile.
-
-Si ca ne charge pas depuis le telephone : Windows affichera peut-etre
-une demande d'autorisation pare-feu la premiere fois - accepte-la.
-Si ca ne marche toujours pas (reseau avec isolation entre appareils),
-dis-le moi, on basculera sur une solution par lien/tunnel a la place.
-
-
-OPTION MANUELLE (depuis ce PC uniquement)
---------------------------------------------
+OPTION MANUELLE
+----------------
 Si tu preferes lancer toi-meme, ouvre deux fenetres cmd :
 
 Fenetre 1 :
-  cd /d s:\App\server
+  cd /d C:\Guillaume\server
   npm run dev
 
 Fenetre 2 :
-  cd /d s:\App\client
+  cd /d C:\Guillaume\client
   npm run dev
 
-Puis ouvre http://10.28.19.21:5173 dans ton navigateur (ca marche
-aussi bien depuis ce PC que depuis ton telephone, meme adresse).
+Puis ouvre http://localhost:5173 dans ton navigateur.
 
 
 COMMENT TESTER UN MATCH
 --------------------------
-Il faut deux utilisateurs pour faire un "match". Le plus simple :
-ton telephone (scanne le QR code) + un onglet de navigateur sur ce PC,
-ou deux onglets sur ce PC si tu n'as pas ton telephone sous la main.
+Il faut deux utilisateurs pour faire un "match". Le plus simple en local :
+ouvre DEUX onglets de navigateur sur http://localhost:5173.
 
-  1. Cote 1 : clique "Creer", choisis un pays, Films ou Series, et
+  1. Onglet 1 : clique "Creer", choisis un pays, Films ou Series, et
      des plateformes de streaming. Note le code a 4 chiffres affiche.
-  2. Cote 2 : clique "Rejoindre", entre ce code, choisis des
+  2. Onglet 2 : clique "Rejoindre", entre ce code, choisis des
      plateformes (au moins une en commun) et eventuellement un genre.
   3. Une fois les deux prets, swipe a droite ("J'aime", ou le bouton
      coeur) sur le MEME film/serie des deux cotes pour declencher
      l'ecran de Match.
 
-Pour voir l'app en format mobile dans le navigateur du PC (sans
-telephone) : F12 puis Ctrl+Shift+M.
+Pour voir l'app en format mobile dans le navigateur (sans telephone) :
+F12 puis Ctrl+Shift+M.
+
+
+TESTER SUR TON TELEPHONE (apres avoir pousse les changements)
+-----------------------------------------------------------------
+Le developpement se fait en local (rapide, pas d'attente de deploiement),
+mais pour un vrai test sur telephone, il faut la version en ligne :
+
+  https://matchflix-seven.vercel.app
+
+Cette URL se mets a jour automatiquement apres chaque "git push" -
+demande-moi quand tu veux pousser les changements valides en local.
 
 
 A SAVOIR
 ----------------
-- Le serveur ne redemarre PAS automatiquement si tu modifies son code
-  (limite du lecteur reseau S: pour la surveillance de fichiers).
-  Apres un changement cote serveur : Ctrl+C puis "npm run dev" a
-  nouveau dans sa fenetre.
-- Le client (frontend), lui, recharge automatiquement quand le code
-  change, sur PC comme sur le telephone connecte.
-- L'adresse 10.28.19.21 est l'IP locale de ce PC sur le reseau - si
-  elle change un jour (nouveau reseau, redemarrage du routeur...),
-  dis-le moi et je remets a jour la config.
+- Le client (frontend) recharge automatiquement quand le code change.
+- Le serveur recharge aussi automatiquement (tsx watch) depuis qu'on a
+  deplace le projet sur ce disque local (C:\Guillaume).

@@ -8,18 +8,20 @@ export function Header({ subtitle }: { subtitle?: ReactNode }) {
 
   return (
     <div className={styles.header}>
-      <button
-        type="button"
-        className={styles.languageSwitch}
-        onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
-        aria-label="Switch language"
-      >
-        {language === 'fr' ? 'EN' : 'FR'}
-      </button>
       <div className={styles.logoCard}>
         <img className={styles.logo} src={logo} alt="Matchflix" />
       </div>
-      {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+      <div className={styles.subtitleRow}>
+        {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+        <button
+          type="button"
+          className={styles.languageSwitch}
+          onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+          aria-label="Switch language"
+        >
+          {language === 'fr' ? 'EN' : 'FR'}
+        </button>
+      </div>
     </div>
   )
 }

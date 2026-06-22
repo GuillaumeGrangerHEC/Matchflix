@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type MouseEvent } from 'react'
 import { motion, useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
-import type { Movie } from '@/types'
+import { api } from '@/services/api'
+import type { MediaType, Movie } from '@/types'
 import { TMDB_LOGO_BASE_URL } from '@/utils/constants'
+import { TrailerModal } from './TrailerModal'
 import styles from './SwipeCard.module.css'
 
 const SWIPE_THRESHOLD = 120
@@ -14,17 +16,20 @@ export type SwipeDirection = 'like' | 'pass'
 interface SwipeCardProps {
   movie: Movie
   isTop: boolean
+  mediaType: MediaType
   trigger?: SwipeDirection | null
   onSwiped: (direction: SwipeDirection) => void
 }
 
-export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
-  const { t } = useLanguage()
+export function SwipeCard({ movie, isTop, mediaType, trigger, onSwiped }: SwipeCardProps) {
+  const { language, t } = useLanguage()
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-200, 200], [-12, 12])
   const likeOpacity = useTransform(x, [20, 120], [0, 1])
   const passOpacity = useTransform(x, [-120, -20], [1, 0])
   const [showOverview, setShowOverview] = useState(false)
+  const [trailerKey, setTrailerKey] = useState<string | null>(null)
+  const [trailerState, setTrailerState] = useState<'idle' | 'loading' | 'none'>('idle')
 
   function flyOut(direction: SwipeDirection) {
     animate(x, direction === 'like' ? FLY_OUT_DISTANCE : -FLY_OUT_DISTANCE, {
@@ -46,6 +51,25 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
       flyOut(info.offset.x > 0 ? 'like' : 'pass')
     } else {
       animate(x, 0, { type: 'spring', stiffness: 500, damping: 35 })
+    }
+  }
+
+  async function handleTrailerClick(e: MouseEvent) {
+    e.stopPropagation()
+    if (trailerState === 'loading') return
+    setTrailerState('loading')
+    try {
+      const { data } = await api.get<{ key: string | null }>(`/movies/${movie.id}/trailer`, {
+        params: { mediaType, language },
+      })
+      if (data.key) {
+        setTrailerKey(data.key)
+        setTrailerState('idle')
+      } else {
+        setTrailerState('none')
+      }
+    } catch {
+      setTrailerState('none')
     }
   }
 
@@ -75,6 +99,17 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
         </div>
       )}
 
+      {isTop && (
+        <button type="button" className={styles.trailerButton} onClick={handleTrailerClick}>
+          ▶{' '}
+          {trailerState === 'loading'
+            ? t('card_trailerLoading')
+            : trailerState === 'none'
+              ? t('card_noTrailer')
+              : t('card_trailer')}
+        </button>
+      )}
+
       {!showOverview && <div className={styles.synopsisHint}>{t('card_synopsis')}</div>}
 
       {showOverview && (
@@ -93,6 +128,8 @@ export function SwipeCard({ movie, isTop, trigger, onSwiped }: SwipeCardProps) {
           </motion.div>
         </>
       )}
+
+      {trailerKey && <TrailerModal videoKey={trailerKey} onClose={() => setTrailerKey(null)} />}
     </motion.div>
   )
 }

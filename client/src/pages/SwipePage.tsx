@@ -101,6 +101,7 @@ export function SwipePage() {
         loading={loading}
         error={error}
         hasMore={hasMore}
+        mediaType={session.mediaType}
         onSwipe={handleSwipe}
         onAdvance={advance}
       />

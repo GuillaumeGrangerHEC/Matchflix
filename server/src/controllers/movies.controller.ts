@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { discoverMoviesByProviders, type ApiLanguage, type MediaType } from '../services/tmdb.service'
+import { discoverMoviesByProviders, getTrailerKey, type ApiLanguage, type MediaType } from '../services/tmdb.service'
 
 function parseIdList(value: unknown): number[] {
   const raw = String(value ?? '').trim()
@@ -34,6 +34,24 @@ export async function getMovies(req: Request, res: Response, next: NextFunction)
       language
     )
     res.json({ results, totalPages })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function getTrailer(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number(req.params.id)
+    const mediaType: MediaType = req.query.mediaType === 'tv' ? 'tv' : 'movie'
+    const language: ApiLanguage = req.query.language === 'en' ? 'en' : 'fr'
+
+    if (Number.isNaN(id)) {
+      res.status(400).json({ error: 'Identifiant de film invalide.' })
+      return
+    }
+
+    const key = await getTrailerKey(id, mediaType, language)
+    res.json({ key })
   } catch (err) {
     next(err)
   }

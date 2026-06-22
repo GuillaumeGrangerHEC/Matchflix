@@ -59,6 +59,20 @@
   font-weight: 600;
 }
 
+.trailerButton {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-terracotta);
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .overviewScrim {
   position: absolute;
   inset: 0;
