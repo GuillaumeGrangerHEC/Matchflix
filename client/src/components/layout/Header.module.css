@@ -23,13 +23,8 @@
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-heading);
-  font-size: 42px;
-  font-weight: 800;
-  color: var(--color-terracotta);
+  height: 56px;
+  width: auto;
 }
 
 .subtitle {

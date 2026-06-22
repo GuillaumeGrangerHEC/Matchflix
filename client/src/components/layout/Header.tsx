@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
+import logo from '@/assets/matchflix-logo.jpg'
 import styles from './Header.module.css'
 
 export function Header({ subtitle }: { subtitle?: ReactNode }) {
@@ -15,10 +16,7 @@ export function Header({ subtitle }: { subtitle?: ReactNode }) {
       >
         {language === 'fr' ? 'EN' : 'FR'}
       </button>
-      <div className={styles.logo}>
-        <span aria-hidden="true">🎬</span>
-        Matchflix
-      </div>
+      <img className={styles.logo} src={logo} alt="Matchflix" />
       {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
     </div>
   )
