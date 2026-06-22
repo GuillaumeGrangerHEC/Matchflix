@@ -1,0 +1,43 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--color-terracotta);
+  color: var(--color-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.secondary {
+  background: var(--color-beige);
+  color: var(--color-ink);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-terracotta);
+  padding: 8px 12px;
+}
+
+.fullWidth {
+  width: 100%;
+}

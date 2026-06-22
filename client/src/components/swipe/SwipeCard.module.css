@@ -1,0 +1,87 @@
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-beige);
+  box-shadow: var(--shadow-card);
+  touch-action: none;
+  cursor: grab;
+  display: flex;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.posterFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--color-ink-soft);
+}
+
+.gradient {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(46, 36, 34, 0.92), transparent);
+}
+
+.info {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 20px;
+  color: var(--color-white);
+}
+
+.title {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.overview {
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.9;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.likeStamp,
+.passStamp {
+  position: absolute;
+  top: 32px;
+  padding: 8px 16px;
+  border: 3px solid;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.likeStamp {
+  left: 24px;
+  color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+  transform: rotate(-12deg);
+}
+
+.passStamp {
+  right: 24px;
+  color: var(--color-pass);
+  border-color: var(--color-pass);
+  transform: rotate(12deg);
+}

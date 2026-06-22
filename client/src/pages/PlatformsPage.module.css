@@ -1,0 +1,23 @@
+.instructions {
+  margin: 24px 0 16px;
+  color: var(--color-ink-soft);
+  font-size: 15px;
+}
+
+.instructions:first-of-type {
+  margin-top: 0;
+}
+
+.waiting {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--color-ink-soft);
+}
+
+.actions {
+  margin-top: 20px;
+}

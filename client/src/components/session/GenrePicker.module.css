@@ -1,0 +1,32 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip,
+.chipActive {
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.chip:active,
+.chipActive:active {
+  transform: scale(0.96);
+}
+
+.chip {
+  background: var(--color-white);
+  color: var(--color-ink-soft);
+  border-color: var(--color-beige);
+}
+
+.chipActive {
+  background: var(--color-terracotta);
+  color: var(--color-white);
+}

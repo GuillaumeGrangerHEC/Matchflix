@@ -1,0 +1,65 @@
+{
+  "rules": {
+    "sessions": {
+      "$code": {
+        ".read": "$code.matches(/^[0-9]{4}$/)",
+        ".write": "$code.matches(/^[0-9]{4}$/)",
+
+        "country": {
+          ".validate": "newData.isString() && (newData.val() === 'CH' || newData.val() === 'FR' || newData.val() === 'BE')"
+        },
+        "mediaType": {
+          ".validate": "newData.isString() && (newData.val() === 'movie' || newData.val() === 'tv')"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+
+        "users": {
+          "$userId": {
+            ".validate": "newData.hasChildren(['joinedAt'])",
+            "platforms": {
+              ".validate": "newData.hasChildren() || !newData.exists()",
+              "$index": {
+                ".validate": "newData.isString()"
+              }
+            },
+            "genres": {
+              ".validate": "newData.hasChildren() || !newData.exists()",
+              "$index": {
+                ".validate": "newData.isNumber()"
+              }
+            },
+            "likedMovieIds": {
+              "$movieId": {
+                ".validate": "newData.hasChildren(['title'])",
+                "title": { ".validate": "newData.isString()" },
+                "posterPath": { ".validate": "newData.isString() || newData.val() === null" },
+                "$other": { ".validate": false }
+              }
+            },
+            "joinedAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "match": {
+          ".validate": "newData.hasChildren(['movieId', 'title', 'matchedAt'])",
+          "movieId": { ".validate": "newData.isNumber()" },
+          "title": { ".validate": "newData.isString()" },
+          "posterPath": { ".validate": "newData.isString() || newData.val() === null" },
+          "matchedAt": { ".validate": "newData.isNumber()" },
+          "$other": { ".validate": false }
+        },
+
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.pass,
+.like {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease;
+}
+
+.pass:active,
+.like:active {
+  transform: scale(0.9);
+}
+
+.pass:disabled,
+.like:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pass {
+  background: var(--color-white);
+  color: var(--color-pass);
+}
+
+.like {
+  background: var(--color-terracotta);
+  color: var(--color-white);
+}
