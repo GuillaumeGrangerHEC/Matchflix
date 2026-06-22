@@ -45,9 +45,17 @@ $env:PATH = "$env:USERPROFILE\nodejs-lts;$env:PATH"
 ## Deployment
 
 - **Source**: pushed to GitHub at `https://github.com/GuillaumeGrangerHEC/Matchflix` (git was initialized fresh for this project — no prior history).
-- **Client**: deployed on Vercel, auto-deploys on push to `main`.
-- **Server**: deployed on Render (Node web service, root directory `server`, build `npm install && npm run build`, start `npm run start`), auto-deploys on push to `main`. Render injects its own `PORT` env var — `server/src/config/env.ts` already reads `process.env.PORT` with a `4000` fallback, so this works without changes. `CLIENT_ORIGIN` on Render must list the deployed Vercel URL (comma-separated if alongside `localhost:5173` for local dev — see `env.ts`'s `clientOrigins` array).
+- **Client**: deployed on Vercel (`https://matchflix-seven.vercel.app`), auto-deploys on push to `main`. Env vars (the 8 `VITE_*` ones) are set directly in the Vercel project's Settings > Environment Variables — **not** read from a committed file. Changing them requires a manual redeploy (Deployments tab > "..." > Redeploy) to take effect; just saving the variable does not trigger one.
+- **Server**: deployed on Render (`https://matchflix-c4qc.onrender.com`, Node web service, root directory `server`, build `npm install && npm run build`, start `npm run start`), auto-deploys on push to `main`. Render injects its own `PORT` env var — `server/src/config/env.ts` already reads `process.env.PORT` with a `4000` fallback, so this works without changes. `CLIENT_ORIGIN` on Render is set to the exact Vercel URL above (no trailing slash) — `env.ts`'s `clientOrigins` splits on commas if it ever needs to allow more than one origin alongside it.
 - Reason this exists at all: the dev machine has no admin rights, no WiFi adapter (Ethernet only), and its corporate network blocks tunnel tools (`localtunnel` hangs indefinitely; `ngrok` itself was inaccessible) — a real deployment was the only reliable way to test the mobile-first UI on an actual phone.
+- **To ship a code change**: `git add -A && git commit -m "..." && git push` from the repo root — both platforms auto-deploy from `main`, usually live within 1-2 minutes. No separate deploy step needed unless only env vars changed (see Vercel note above).
+
+### Still personal/dev-mode, not a public launch
+
+The app is live at a real URL, but treat it as a development/personal-testing deployment, not a public product, until told otherwise:
+- TMDB's API key was requested under **"Personal use"** — valid while unmonetized, but must be revisited (likely requiring a commercial agreement with TMDB) before any monetization ships, regardless of how the app is distributed. Don't lose track of this when monetization work starts.
+- Render's free tier spins the service down after inactivity (first request after idle is slow) and Vercel/Render free tiers generally assume low traffic — fine for personal testing, worth flagging to the user if real usage grows.
+- No auth, no stale-session cleanup in Firebase (see "No authentication" below) — an accepted tradeoff for personal/close-friends use, not yet vetted for a wider audience.
 
 ## Architecture
 
