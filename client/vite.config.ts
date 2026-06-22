@@ -38,9 +38,5 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    watch: {
-      // Le watcher natif de Windows échoue sur les lecteurs réseau (ex. S:) — le polling le contourne.
-      usePolling: true,
-    },
   },
 })

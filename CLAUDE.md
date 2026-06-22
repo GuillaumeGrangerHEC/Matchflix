@@ -28,7 +28,7 @@ npm run lint      # eslint .
 npm run preview   # serve the production build locally
 
 # server
-npm run dev       # tsx src/server.ts (http://localhost:4000) — NOT watch mode, see note below
+npm run dev       # tsx watch src/server.ts (http://localhost:4000)
 npm run build     # tsc -> dist/
 npm run start     # node dist/server.js (run build first)
 ```
@@ -40,7 +40,14 @@ No test framework is configured in either project yet.
 $env:PATH = "$env:USERPROFILE\nodejs-lts;$env:PATH"
 ```
 
-**No file-watching (this machine specifically):** the repo lives on `S:`, a mapped network drive. Windows' native file-watch API (`fs.watch`/`ReadDirectoryChangesW`) doesn't work on it — both `vite` and `tsx watch` crash immediately with `Error: UNKNOWN: unknown error, watch`. The fix in place: client's `vite.config.ts` sets `server.watch.usePolling: true` (keeps HMR working, just polling-based instead of native events). The server's `dev` script dropped `watch` entirely (`tsx src/server.ts`, one-shot) since tsx has no reliable polling flag — after editing server code, manually stop (Ctrl+C) and re-run `npm run dev`. If this project ever moves to a local (non-network) drive, `watch` can likely be re-added to the server script.
+**Repo location history:** this project originally lived on `S:` (a mapped network drive), where Windows' native file-watch API didn't work (`fs.watch` crashed with `Error: UNKNOWN: unknown error, watch`), forcing `usePolling` in Vite and a non-watching server `dev` script. It was moved to `C:\Guillaume` on 2026-06-22 specifically to fix this — both now use native watching again. If file-watching ever breaks mysteriously again, check whether the repo is back on a network-mapped drive.
+
+## Deployment
+
+- **Source**: pushed to GitHub at `https://github.com/GuillaumeGrangerHEC/Matchflix` (git was initialized fresh for this project — no prior history).
+- **Client**: deployed on Vercel, auto-deploys on push to `main`.
+- **Server**: deployed on Render (Node web service, root directory `server`, build `npm install && npm run build`, start `npm run start`), auto-deploys on push to `main`. Render injects its own `PORT` env var — `server/src/config/env.ts` already reads `process.env.PORT` with a `4000` fallback, so this works without changes. `CLIENT_ORIGIN` on Render must list the deployed Vercel URL (comma-separated if alongside `localhost:5173` for local dev — see `env.ts`'s `clientOrigins` array).
+- Reason this exists at all: the dev machine has no admin rights, no WiFi adapter (Ethernet only), and its corporate network blocks tunnel tools (`localtunnel` hangs indefinitely; `ngrok` itself was inaccessible) — a real deployment was the only reliable way to test the mobile-first UI on an actual phone.
 
 ## Architecture
 
